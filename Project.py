@@ -26,7 +26,7 @@ def update(frame):
     moving_point.set_data(x, y)
 
     # Update the ellipse
-    ellipse.set_data(*generate_ellipse(center, a, b, np.radians(frame)))
+    ellipse.set_data(*generate_ellipse(center, x, y, np.radians(frame)))
 
     # Update the path of the moving point on the ellipse
     path_line.set_data([center[0], x], [center[1], y])
