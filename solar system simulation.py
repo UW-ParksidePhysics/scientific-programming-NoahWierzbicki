@@ -8,7 +8,7 @@ import numpy as np
 
 
 def generate_ellipse(ellipse_center, x, y, angle, a, b, num_points=100):
-    """"""
+    """creates ellipses that are used to represent planetary orbits"""
     theta = np.linspace(0, 2 * np.pi, num_points)
     cos_theta = np.cos(theta)
     sin_theta = np.sin(theta)
