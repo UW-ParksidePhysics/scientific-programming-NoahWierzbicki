@@ -21,8 +21,44 @@ def parse_file_name(filepath):
   """ returns a string of 3 variables; chemical symbol, crystal symbol, denisty function """"
   filename = os.path.basename(filepath)
   if len(parts) < 4:
-        raise ValueError("Filename does not contain enough parts to extract the necessary information.")
+        raise ValueError("Filename does not contain enough data.")
 
   return parts[0], parts[1], parts[2]
 
 def plot_data(data, eos_fit_curve, eos_parameters, chemical_symbol, crystal_symmetry_symbol, display_graph):
+   volumes, energies = data
+
+    fit_volumes = np.linspace(min(volumes), max(volumes), num=len(eos_fit_curve))
+    volumes_angstrom = np.array([convert_units(volume, 'cubic_bohr_per_atom', 'cubic_angstroms_per_atom') for volume in volumes])
+    fit_volumes_angstrom = np.array([convert_units(volume, 'cubic_bohr_per_atom', 'cubic_angstroms_per_atom') for volume in fit_volumes])
+    energies_eV = np.array([convert_units(energy, 'rydberg_per_atom', 'electron_volts_per_atom') for energy in energies])
+    eos_fit_curve_eV = np.array([convert_units(energy, 'rydberg_per_atom', 'electron_volts_per_atom') for energy in eos_fit_curve])
+
+    fig, ax = plt.subplots()
+    ax.scatter(volumes_angstrom, energies_eV, color='blue', marker='o', label='Data Points')
+    ax.plot(fit_volumes_angstrom, eos_fit_curve_eV, 'k-', label='Fit Curve')
+
+    x_buffer = 0.1 * (np.max(fit_volumes_angstrom) - np.min(fit_volumes_angstrom))
+    y_buffer = 0.1 * (np.max(energies_eV) - np.min(energies_eV))
+    ax.set_xlim([np.min(fit_volumes_angstrom) - x_buffer, np.max(fit_volumes_angstrom) + x_buffer])
+    ax.set_ylim([np.min(energies_eV) - y_buffer, np.max(energies_eV) + y_buffer])
+
+    ax.set_xlabel(r'$V$ ($\mathit{\AA}^3$/atom)', fontsize=12)
+    ax.set_ylabel(r'$E$ (eV/atom)', fontsize=12)
+    ax.set_title(f"Murnaghan Equation of State for {chemical_symbol} in DFT {crystal_symmetry_symbol}")
+
+    annotations = {
+        chemical_symbol: {'position': np.array([0.05, 0.95]), 'alignment': ['left', 'top'], 'fontsize': 12},
+        crystal_symmetry_symbol: {'position': np.array([0.5, 0.9]), 'alignment': ['center', 'top'], 'fontsize': 12, 'style': 'italic'},
+        f'K0 = {eos_parameters[1]:.1f} GPa': {'position': np.array([0.5, 0.85]), 'alignment': ['center', 'top'], 'fontsize': 12},
+        f'Created by Noah, {datetime.now().date().isoformat()}': {'position': np.array([0.05, 0.01]), 'alignment': ['left', 'bottom'], 'fontsize': 10}
+    }
+    annotate_plot(annotations)
+
+    ax.legend()
+    ax.grid(True)
+
+    if display_graph:
+        plt.show()
+    else:
+        plt.savefig('Noah_Pt.Fm-3m.GGA-PBEsol.MurnaghanEquationOfState.png')
