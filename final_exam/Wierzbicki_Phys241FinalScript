@@ -1,0 +1,19 @@
+"""
+This file brings together the rest of the files I have made and produces their results
+
+"""
+
+
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+from datetime import datetime
+from convert_units import convert_units
+from read_two_columns_text import read_two_columns_text
+from calculate_bivariate_statistics import calculate_bivariate_statistics
+from calculate_quadratic_fit import calculate_quadratic_fit
+from equations_of_state import fit_eos
+from annotate_plot import annotate_plot
+from generate_matrix import generate_matrix
+from calculate_lowest_eigenvectors import calculate_lowest_eigenvectors
+
