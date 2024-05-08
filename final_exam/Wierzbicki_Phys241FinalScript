@@ -17,3 +17,6 @@ from annotate_plot import annotate_plot
 from generate_matrix import generate_matrix
 from calculate_lowest_eigenvectors import calculate_lowest_eigenvectors
 
+def parse_file_name(filepath):
+  """ returns a string of 3 variables; chemical symbol, crystal symbol, denisty function """"
+  filename = os.path.basename(filepath)
