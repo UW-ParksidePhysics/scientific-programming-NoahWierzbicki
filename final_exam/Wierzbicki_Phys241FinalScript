@@ -45,15 +45,15 @@ def plot_data(data, eos_fit_curve, eos_parameters, chemical_symbol, crystal_symm
 
     ax.set_xlabel(r'$V$ ($\mathit{\AA}^3$/atom)', fontsize=12)
     ax.set_ylabel(r'$E$ (eV/atom)', fontsize=12)
-    ax.set_title(f"Murnaghan Equation of State for {chemical_symbol} in DFT {crystal_symmetry_symbol}")
+    ax.set_title(f"Murnaghan Equation of States for {chemical_symbol} in DFT {crystal_symmetry_symbol}")
 
-    annotations = {
+    annotate = {
         chemical_symbol: {'position': np.array([0.05, 0.95]), 'alignment': ['left', 'top'], 'fontsize': 12},
         crystal_symmetry_symbol: {'position': np.array([0.5, 0.9]), 'alignment': ['center', 'top'], 'fontsize': 12, 'style': 'italic'},
         f'K0 = {eos_parameters[1]:.1f} GPa': {'position': np.array([0.5, 0.85]), 'alignment': ['center', 'top'], 'fontsize': 12},
         f'Created by Noah, {datetime.now().date().isoformat()}': {'position': np.array([0.05, 0.01]), 'alignment': ['left', 'bottom'], 'fontsize': 10}
     }
-    annotate_plot(annotations)
+    annotate_plot(annotate)
 
     ax.legend()
     ax.grid(True)
@@ -61,4 +61,4 @@ def plot_data(data, eos_fit_curve, eos_parameters, chemical_symbol, crystal_symm
     if display_graph:
         plt.show()
     else:
-        plt.savefig('Noah_Pt.Fm-3m.GGA-PBEsol.MurnaghanEquationOfState.png')
+        plt.savefig('Noah_Pt.Fm-3m.GGA-PBEsol.MurnaghanEquationsOfState.png')
