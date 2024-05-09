@@ -4,13 +4,13 @@ This file brings together the rest of the files I have made and produces their r
 """
 
 import os
-from typing import Any, Tuple
+from typing import Any
 
 import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime
 from numpy import ndarray, dtype
-from convert_units import convert_units
+
 from read_two_columns_text import read_two_columns_text
 from calculate_bivariate_statistics import calculate_bivariate_statistics
 from calculate_quadratic_fit import calculate_quadratic_fit
@@ -18,6 +18,7 @@ from equations_of_state import fit_eos
 from annotate_plot import annotate_plot
 from generate_matrix import generate_matrix
 from calculate_lowest_eigenvectors import calculate_lowest_eigenvectors
+from convert_units import convert_units
 
 
 def parse_file_name(filepath):
@@ -32,8 +33,7 @@ def parse_file_name(filepath):
 
 def plot_data(data, eos_fit_curve, eos_parameters, chemical_symbol, crystal_symbol, display_graph):
     volumes, energies = data
-    fit_vol: ndarray[Any, dtype] | tuple[ndarray[Any, dtype], Any] = np.linspace(min(volumes), max(volumes),
-                                                                                 num=len(eos_fit_curve))
+    fit_vol = np.linspace(min(volumes), max(volumes), num=len(eos_fit_curve))
     volumes_angstrom = np.array(
         [convert_units(volume, 'cubic_bohr_per_atom', 'cubic_angstroms_per_atom') for volume in volumes])
     fit_vol_angstrom = np.array(
@@ -47,8 +47,8 @@ def plot_data(data, eos_fit_curve, eos_parameters, chemical_symbol, crystal_symb
     ax.scatter(volumes_angstrom, energies_eV, color='blue', marker='o', label='Data Points')
     ax.plot(fit_vol_angstrom, eos_fit_curve_eV, 'k-', label='Fit Curve')
 
-    x_buffer = 0.1 * (np.max(fit_vol_angstrom) - np.min(fit_vol_angstrom))
-    y_buffer = 0.1 * (np.max(energies_eV) - np.min(energies_eV))
+    x_buffer = 0.01 * (np.max(fit_vol_angstrom) - np.min(fit_vol_angstrom))
+    y_buffer = 0.01 * (np.max(energies_eV) - np.min(energies_eV))
     ax.set_xlim([np.min(fit_vol_angstrom) - x_buffer, np.max(fit_vol_angstrom) + x_buffer])
     ax.set_ylim([np.min(energies_eV) - y_buffer, np.max(energies_eV) + y_buffer])
 
@@ -94,7 +94,8 @@ def fit_state_equation(filename, display_graph=True):
     energies = data[1]
     statistics = calculate_bivariate_statistics(data)
     print(
-        f"Statistics:\nMean of Y: {statistics[0]}\nStandard Deviation of Y: {statistics[1]}\nMin X: {statistics[2]}, Max X: {statistics[3]}\nMin Y: {statistics[4]}, Max Y: {statistics[5]}")
+        f"Statistics:\nMean of Y: {statistics[0]}\nStandard Deviation of Y: {statistics[1]}\nMin X: {statistics[2]},"
+        f" Max X: {statistics[3]}\nMin Y: {statistics[4]}, Max Y: {statistics[5]}")
     quadratic_coefficients = calculate_quadratic_fit(data)
     print(f"Quadratic Coefficients: {quadratic_coefficients}")
     eos_fit_curve, eos_parameters = fit_eos(volumes, energies, quadratic_coefficients, eos='murnaghan',
@@ -120,10 +121,10 @@ def visualize_vectors_in_space(minimum_x, maximum_x, number_of_dimensions, poten
 
     fig, ax = plt.subplots()
     for i in range(len(eigenvectors)):
-        ax.plot(spatial_grid, eigenvectors[i], label=f"$\psi_{i + 1}, E_{i + 1} = {eigenvalues[i]:.4f}$ a.u.")
+        ax.plot(spatial_grid, eigenvectors[i], label=f"$\\psi_{i + 1}, E_{i + 1} = {eigenvalues[i]:.4f}$ a.u.")
 
     ax.set_xlabel("x [a.u.]")
-    ax.set_ylabel("$\psi_n (x) [a.u.]")
+    ax.set_ylabel("$\\psi_n (x) [a.u.]")
     title_text = f"Select Wave functions for a {potential_name} Potential on a Spatial Grid of {number_of_dimensions} Points"
     ax.set_title(title_text)
 
@@ -149,7 +150,7 @@ def visualize_vectors_in_space(minimum_x, maximum_x, number_of_dimensions, poten
 
 if __name__ == "__main__":
     # Visualize Vectors in Space
-    visualize_vectors_in_space(minimum_x=-10, maximum_x=10, number_of_dimensions=120, potential_name='harmonic',
+    visualize_vectors_in_space(minimum_x=-10, maximum_x=10, number_of_dimensions=90, potential_name='harmonic',
                                potential_parameter=1.0, display_graph=True)
 
     # Fit an Equation of State
