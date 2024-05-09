@@ -18,7 +18,7 @@ from generate_matrix import generate_matrix
 from calculate_lowest_eigenvectors import calculate_lowest_eigenvectors
 
 def parse_file_name(filepath):
-  """ returns a string of 3 variables; chemical symbol, crystal symbol, denisty function """"
+  """ returns a string of 3 variables; chemical symbol, crystal symbol, denisty function """
   filename = os.path.basename(filepath)
   if len(parts) < 4:
         raise ValueError("Filename does not contain enough data.")
@@ -89,3 +89,53 @@ def fit_state_equation(filename, display_graph=True):
     print(f"EOS Parameters: {eos_parameters}")
 
     plot_data_and_fit(data, eos_fit_curve, eos_parameters, chemical_symbol, crystal_symbol, display_graph)
+
+
+def visualize_vectors_in_space(minimum_x, maximum_x, number_of_dimensions, potential_name, potential_parameter, display_graph=True):
+    """
+    Generates grid and plots the results
+    """
+    spatial_grid = np.linspace(minimum_x, maximum_x, num=number_of_dimensions)
+    matrix = generate_matrix(minimum_x, maximum_x, number_of_dimensions, potential_name, potential_parameter)
+
+    eigenvalues, eigenvectors = calculate_lowest_eigenvectors(matrix, number_of_eigenvectors=3)
+
+    if np.any(eigenvectors[0] < 0):
+        eigenvectors[0] *= -1
+
+    fig, ax = plt.subplots()
+    for i in range(len(eigenvectors)):
+        ax.plot(spatial_grid, eigenvectors[i], label=f"$\psi_{i+1}, E_{i+1} = {eigenvalues[i]:.4f}$ a.u.")
+
+    ax.set_xlabel("x [a.u.]")
+    ax.set_ylabel("$\psi_n (x) [a.u.]")
+    title_text = f"Select Wavefunctions for a {potential_name} Potential on a Spatial Grid of {number_of_dimensions} Points"
+    ax.set_title(title_text)
+
+    max_eigenvalue_component = np.max(np.abs(eigenvectors))
+    ax.set_ylim(-2 * max_eigenvalue_component, 2 * max_eigenvalue_component)
+
+    ax.axhline(0, color='black', linewidth=1)
+
+    my_name = f"Created by Noah, {datetime.now().date().isoformat()}"
+    annotations = {
+       my_name: {'position': [0.01, 0.01], 'alignment': ['left', 'bottom'], 'fontsize': 10}
+    }
+    annotate_plot(annotations)
+
+    ax.legend()
+    ax.grid(True)
+
+    if display_graph:
+        plt.show()
+    else:
+        plt.savefig('Noah.harmonic.Eigenvector(0_1_2).png')
+
+if __name__ == "__main__":
+    # Visualize Vectors in Space
+    visualize_vectors_in_space(minimum_x=-10, maximum_x=10, number_of_dimensions=120, potential_name='harmonic', potential_parameter=1.0, display_graph=True)
+
+    # Fit an Equation of State
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(current_dir, 'Pt.Fm-3m.GGA-PBEsol.volumes_energies.dat')
+    fit_an_equation_of_state(file_path, display_graph=True)
