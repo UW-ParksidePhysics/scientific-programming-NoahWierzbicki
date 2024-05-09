@@ -69,22 +69,34 @@ def murnaghan(volumes, equilibrium_energy, bulk_modulus, bulk_modulus_derivative
                                                         (1 / (K_0' - 1)) ]
 
     :param volumes:                 NumPy array of volumes per atom
-
     :param equilibrium_energy:      equilibrium energy E_0
-
     :param bulk_modulus:            bulk modulus K_0 = ∂^E/(∂V)^2 / V_0
-
     :param bulk_modulus_derivative: pressure derivative of bulk modulus ∂K_0/∂P
-
     :param equilibrium_volume:      equilibrium volume V_0
-
     :return:                        NumPy array of Murnaghan equation of state values at input volumes
     """
     k0pm1 = bulk_modulus_derivative - 1.0  # K_0' - 1
-    return equilibrium_energy + (bulk_modulus * equilibrium_volume *
-                                 (((1.0 / (bulk_modulus_derivative * k0pm1)) *
-                                   np.power((volumes / equilibrium_volume), (-k0pm1))) +
-                                  (volumes / (bulk_modulus_derivative * equilibrium_volume)) - (1.0 / k0pm1)))
+    result = np.zeros_like(volumes)  # Initialize result array
+
+    # Avoid division by zero and handle potential overflow
+    if np.isclose(k0pm1, 0.0):
+        k0pm1 = np.finfo(float).eps  # Set to a small positive value to avoid division by zero
+    elif np.isclose(bulk_modulus_derivative, 1.0):
+        # Handle case when bulk_modulus_derivative is close to 1 to avoid overflow
+        result.fill(np.inf)  # Set result to infinity for this case
+        return result
+
+    # Compute Murnaghan equation of state values
+    try:
+        result = equilibrium_energy + (bulk_modulus * equilibrium_volume *
+                                       (((1.0 / (bulk_modulus_derivative * k0pm1)) *
+                                         np.power((volumes / equilibrium_volume), (-k0pm1))) +
+                                        (volumes / (bulk_modulus_derivative * equilibrium_volume)) - (1.0 / k0pm1)))
+    except OverflowError:
+        # Handle overflow by setting result to infinity
+        result.fill(np.inf)
+
+    return result
 
 
 def birch_murnaghan(volumes, equilibrium_energy, bulk_modulus, bulk_modulus_derivative, equilibrium_volume):
@@ -115,7 +127,7 @@ def vinet(volumes, equilibrium_energy, bulk_modulus, bulk_modulus_derivative, eq
     """
     Vinet equation of state: E(V) = E_0 + (2 K_0 V_0 / (K_0' - 1)^2) *
                                         - {2 - [5 + 3 (V / V_0)^(1/3) (K_0' - 1) - 3 K_0']
-                                               exp(- (3/2) (K_0' - 1) (1 - (V / V_0)^(1/3))})
+                                               exp(- (3/2) (K_0' - 1) (1 - (V / V_0)^(1/3)))}
 
     :param volumes:                 NumPy array of volumes per atom
 
@@ -140,8 +152,8 @@ def vinet(volumes, equilibrium_energy, bulk_modulus, bulk_modulus_derivative, eq
                     (2. * bulk_modulus * equilibrium_volume / k0pm1_squared) * \
                     (2. - (5. + 3. * reduced_volume_lengths * k0pm1 - 3 * bulk_modulus_derivative) *
                      exponential_factor)
-    except:
-        # assuming the failure is the exponential factor
+    except OverflowError:
+        # Handle overflow by removing the exponential factor
         vinet_eos = equilibrium_energy + \
                     (2. * bulk_modulus * equilibrium_volume / k0pm1_squared) * \
                     (2. - (5. + 3. * reduced_volume_lengths * k0pm1 - 3 * bulk_modulus_derivative))
