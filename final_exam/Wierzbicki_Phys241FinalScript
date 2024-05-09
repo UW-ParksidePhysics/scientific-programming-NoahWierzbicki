@@ -88,7 +88,7 @@ def fit_state_equation(filename, display_graph=True):
     print(f"EOS Fit Curve: {eos_fit_curve}")
     print(f"EOS Parameters: {eos_parameters}")
 
-    plot_data_and_fit(data, eos_fit_curve, eos_parameters, chemical_symbol, crystal_symbol, display_graph)
+    plot_data(data, eos_fit_curve, eos_parameters, chemical_symbol, crystal_symbol, display_graph)
 
 
 def visualize_vectors_in_space(minimum_x, maximum_x, number_of_dimensions, potential_name, potential_parameter, display_graph=True):
@@ -109,7 +109,7 @@ def visualize_vectors_in_space(minimum_x, maximum_x, number_of_dimensions, poten
 
     ax.set_xlabel("x [a.u.]")
     ax.set_ylabel("$\psi_n (x) [a.u.]")
-    title_text = f"Select Wavefunctions for a {potential_name} Potential on a Spatial Grid of {number_of_dimensions} Points"
+    title_text = f"Select Wave functions for a {potential_name} Potential on a Spatial Grid of {number_of_dimensions} Points"
     ax.set_title(title_text)
 
     max_eigenvalue_component = np.max(np.abs(eigenvectors))
@@ -138,4 +138,4 @@ if __name__ == "__main__":
     # Fit an Equation of State
     current_dir = os.path.dirname(os.path.abspath(__file__))
     file_path = os.path.join(current_dir, 'Pt.Fm-3m.GGA-PBEsol.volumes_energies.dat')
-    fit_an_equation_of_state(file_path, display_graph=True)
+    fit_state_equation(file_path, display_graph=True)
