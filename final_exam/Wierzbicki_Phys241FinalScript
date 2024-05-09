@@ -4,13 +4,10 @@ This file brings together the rest of the files I have made and produces their r
 """
 
 import os
-from typing import Any
 
 import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime
-from numpy import ndarray, dtype
-
 from read_two_columns_text import read_two_columns_text
 from calculate_bivariate_statistics import calculate_bivariate_statistics
 from calculate_quadratic_fit import calculate_quadratic_fit
@@ -22,7 +19,7 @@ from convert_units import convert_units
 
 
 def parse_file_name(filepath):
-    """ returns a string of 3 variables; chemical symbol, crystal symbol, denisty function """
+    """ returns a string of 3 variables; chemical symbol, crystal symbol, density function """
     filename = os.path.basename(filepath)
     parts = filename.split('.')
     if len(parts) < 4:
@@ -42,6 +39,8 @@ def plot_data(data, eos_fit_curve, eos_parameters, chemical_symbol, crystal_symb
         [convert_units(energy, 'rydberg_per_atom', 'electron_volts_per_atom') for energy in energies])
     eos_fit_curve_eV = np.array(
         [convert_units(energy, 'rydberg_per_atom', 'electron_volts_per_atom') for energy in eos_fit_curve])
+
+
 
     fig, ax = plt.subplots()
     ax.scatter(volumes_angstrom, energies_eV, color='blue', marker='o', label='Data Points')
@@ -83,7 +82,8 @@ def fit_state_equation(filename, display_graph=True):
     """
     chemical_symbol, crystal_symbol, density_functional_acronym = parse_file_name(filename)
     print(
-        f"Processed file for: {chemical_symbol} in {crystal_symbol} structure using {density_functional_acronym} approximation.")
+        f"Processed file for: {chemical_symbol} in {crystal_symbol} structure using {density_functional_acronym}"
+        f" approximation.")
     try:
         data = read_two_columns_text(filename)
     except OSError as e:
@@ -111,13 +111,14 @@ def visualize_vectors_in_space(minimum_x, maximum_x, number_of_dimensions, poten
     """
     Generates grid and plots the results
     """
+
     spatial_grid = np.linspace(minimum_x, maximum_x, num=number_of_dimensions)
     matrix = generate_matrix(minimum_x, maximum_x, number_of_dimensions, potential_name, potential_parameter)
 
     eigenvalues, eigenvectors = calculate_lowest_eigenvectors(matrix, number_of_eigenvectors=3)
 
     if np.any(eigenvectors[0] < 0):
-        eigenvectors[0] *= -1
+        eigenvectors[0] *= 0
 
     fig, ax = plt.subplots()
     for i in range(len(eigenvectors)):
@@ -125,7 +126,8 @@ def visualize_vectors_in_space(minimum_x, maximum_x, number_of_dimensions, poten
 
     ax.set_xlabel("x [a.u.]")
     ax.set_ylabel("$\\psi_n (x) [a.u.]")
-    title_text = f"Select Wave functions for a {potential_name} Potential on a Spatial Grid of {number_of_dimensions} Points"
+    title_text = (f"Select Wave functions for a {potential_name} Potential on a Spatial Grid of {number_of_dimensions}"
+                  f" Points")
     ax.set_title(title_text)
 
     max_eigenvalue_component = np.max(np.abs(eigenvectors))
