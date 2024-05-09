@@ -5,10 +5,14 @@ This file brings together the rest of the files I have made and produces their r
 
 
 import os
+from typing import Any, Tuple
+
 import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime
 from convert_units import convert_units
+from numpy import ndarray, dtype
+
 from read_two_columns_text import read_two_columns_text
 from calculate_bivariate_statistics import calculate_bivariate_statistics
 from calculate_quadratic_fit import calculate_quadratic_fit
@@ -20,6 +24,7 @@ from calculate_lowest_eigenvectors import calculate_lowest_eigenvectors
 def parse_file_name(filepath):
   """ returns a string of 3 variables; chemical symbol, crystal symbol, denisty function """
   filename = os.path.basename(filepath)
+  parts = filename.split('.')
   if len(parts) < 4:
         raise ValueError("Filename does not contain enough data.")
 
@@ -28,7 +33,7 @@ def parse_file_name(filepath):
 def plot_data(data, eos_fit_curve, eos_parameters, chemical_symbol, crystal_symbol, display_graph):
    volumes, energies = data
 
-    fit_vol = np.linspace(min(volumes), max(volumes), num=len(eos_fit_curve))
+    fit_vol: ndarray[Any, dtype[Any]] | tuple[ndarray[Any, dtype[Any]], Any] = np.linspace(min(volumes), max(volumes), num=len(eos_fit_curve))
     volumes_angstrom = np.array([convert_units(volume, 'cubic_bohr_per_atom', 'cubic_angstroms_per_atom') for volume in volumes])
     fit_vol_angstrom = np.array([convert_units(volume, 'cubic_bohr_per_atom', 'cubic_angstroms_per_atom') for volume in fit_vol])
     energies_eV = np.array([convert_units(energy, 'rydberg_per_atom', 'electron_volts_per_atom') for energy in energies])
