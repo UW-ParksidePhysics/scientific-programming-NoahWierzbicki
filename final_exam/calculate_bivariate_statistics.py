@@ -7,6 +7,7 @@ __author__ = "Jacob, Noah"
 import numpy as np
 from scipy import stats
 
+
 def calculate_bivariate_statistics(data):
     """
     Calculates statistical characteristics for bivariate (x, y) data using scipy's stats.describe function.
@@ -27,7 +28,7 @@ def calculate_bivariate_statistics(data):
     IndexError: If the data array has inappropriate dimensions.
     """
     if data.shape[0] != 2 or data.shape[1] <= 1:
-        raise IndexError("Data array must have 2 rows and more than 1 column.")
+        raise IndexError("Data array must have 2 columns and more than 1 row.")
 
     stats_y = stats.describe(data[1, :])
     min_x = np.min(data[0, :])
@@ -40,11 +41,12 @@ def calculate_bivariate_statistics(data):
         min_x, max_x, min_y, max_y
     ])
 
+
 if __name__ == "__main__":
     # Example usage: Using an array centered around zero of (x ∈ [-10, 10])
     # Create array:
     x = np.linspace(-10, 10, 101)
-    y = x**2
+    y = x ** 2
     data = np.vstack((x, y))
 
     # Preform analysis:

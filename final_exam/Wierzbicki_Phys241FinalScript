@@ -40,8 +40,6 @@ def plot_data(data, eos_fit_curve, eos_parameters, chemical_symbol, crystal_symb
     eos_fit_curve_eV = np.array(
         [convert_units(energy, 'rydberg_per_atom', 'electron_volts_per_atom') for energy in eos_fit_curve])
 
-
-
     fig, ax = plt.subplots()
     ax.scatter(volumes_angstrom, energies_eV, color='blue', marker='o', label='Data Points')
     ax.plot(fit_vol_angstrom, eos_fit_curve_eV, 'k-', label='Fit Curve')
@@ -80,9 +78,9 @@ def fit_state_equation(filename, display_graph=True):
     plots results.
 
     """
-    chemical_symbol, crystal_symbol, density_functional_acronym = parse_file_name(filename)
+    chemical_symbol, crystal_symbol, density_acronym = parse_file_name(filename)
     print(
-        f"Processed file for: {chemical_symbol} in {crystal_symbol} structure using {density_functional_acronym}"
+        f"Processed file for: {chemical_symbol} in {crystal_symbol} structure using {density_acronym}"
         f" approximation.")
     try:
         data = read_two_columns_text(filename)
