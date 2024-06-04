@@ -9,7 +9,7 @@ import numpy as np
 # Function to generate ellipse points
 
 
-def generate_ellipse(ellipse_center, x, y, angle, a, b, num_points=100):
+def generate_ellipse(ellipse_center, x, y, angle, a, b, num_points=100):  # I hope to create moving ellipses which move at an accurate speed to the reference
    """creates ellipses that are used to represent planetary orbits"""
    theta = np.linspace(0, 2 * np.pi, num_points)
    cos_theta = np.cos(theta)
@@ -61,7 +61,8 @@ def plot_solar_system():
    planet_names = ["mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune"]
    planet_names = [string.capitalize() for string in planet_names]
    radius = 1  # Radius of rotation
-
+   # I hope to add many more objects aside from the simple planets, like major astronomical bodies such as large asteroids or comets
+  
    # Create initial plot
    fig, ax = plt.subplots()
    ax.set_xlim(-40, 40)
